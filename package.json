@@ -1,0 +1,16 @@
+{
+  "name": "timestampserializer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.2",
+    "knex": "^2.3.0",
+    "pg": "^8.8.0"
+  }
+}
