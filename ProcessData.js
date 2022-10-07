@@ -47,28 +47,28 @@ class ProcessData {
                 let diff = e.getMinuteDiff(last_data.timestamp, data.timestamp);
                 if (diff > 0) {
                     let tmp_date = new Date(last_data.timestamp);
-
-                    let outdoor_temp_first = e.getValue(last_data.outdoor_temperature);
-                    let outdoor_temp_last = e.getValue(data.outdoor_temperature);
-                    let prev_value = outdoor_temp_first;
-
                     for (let i = 0; i < diff; i++) {
                         tmp_date.setMinutes(tmp_date.getMinutes() + 1);
-                        let val = 0;
-                        val = (outdoor_temp_last - outdoor_temp_first);
-                        val = val / (diff + 1);
-                        val = prev_value + val;
 
                         let k = {
                             timestamp: tmp_date,
                             timestamp_created: new Date(),
                             worked: true
                         };
+
                         for (let key of Object.keys(DataDecider)) {
                             if (DataDecider[key] === true) {
+                                let otf = e.getValue(last_data[key]);
+                                let otl = e.getValue(data[key]);
+
+                                let val = 0;
+                                val = (otl - otf);
+                                val = val / (diff + 1);
+                                val = otf + val;
+
                                 k[key] = val;
                             } else {
-                                k[key] = outdoor_temp_first;
+                                k[key] = last_data[key];
                             }
                         }
                         try {
@@ -78,7 +78,6 @@ class ProcessData {
                             console.log(err)
                             console.log('Error in inserting data');
                         }
-                        prev_value = val;
                     }
                     await knex(process.env.DB_TABLE).update({ worked: true }).where('id', data.id);
                 }
